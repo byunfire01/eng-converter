@@ -80,8 +80,8 @@ export default function Home() {
   const refs = QUICK_REFERENCE[category] || [];
 
   return (
-    <div className="bg-[var(--bg)] text-[var(--text)] transition-colors">
-      <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-3">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors flex flex-col">
+      <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-3 w-full flex-1 flex flex-col">
 
         {/* Header */}
         <header className="mb-3 lg:mb-2 flex items-start justify-between">
@@ -309,6 +309,7 @@ export default function Home() {
           </section>
         )}
 
+        <div className="flex-1" />
         {/* Footer */}
         <footer className="pt-1 pb-2 text-center text-[11px] text-[var(--text-faint)]">
           Decimal.js 고정밀 연산 · SI 단위계 준거
