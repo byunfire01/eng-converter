@@ -22,6 +22,7 @@ import Decimal from "decimal.js";
 import {
   categories,
   convertUnit,
+  DEFAULT_UNITS,
   formatDecimalForDisplay,
   getUnitLabel,
   getUnitsByCategory,
@@ -31,36 +32,7 @@ import {
 } from "@/lib/converter";
 
 function getDefaultUnits(category: CategoryId): { from: UnitId; to: UnitId } {
-  switch (category) {
-    case "pressure":
-      return { from: "Pa", to: "bar" };
-    case "viscosity":
-      return { from: "Pa_s", to: "cP" };
-    case "kinematicViscosity":
-      return { from: "m2_per_s", to: "cSt" };
-    case "energy":
-      return { from: "J", to: "kJ" };
-    case "length":
-      return { from: "m", to: "km" };
-    case "mass":
-      return { from: "kg", to: "lb" };
-    case "volume":
-      return { from: "m3", to: "L" };
-    case "temperature":
-      return { from: "C", to: "K" };
-    case "area":
-      return { from: "m2", to: "pyeong" };
-    case "power":
-      return { from: "W", to: "kW" };
-    case "force":
-      return { from: "N", to: "kN" };
-    case "speed":
-      return { from: "m_per_s", to: "km_per_h" };
-    case "flowRate":
-      return { from: "m3_per_s", to: "CFM" };
-    default:
-      return { from: "J", to: "kJ" };
-  }
+  return DEFAULT_UNITS[category];
 }
 
 export default function Home() {

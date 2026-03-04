@@ -969,6 +969,29 @@ export const categories: { id: CategoryId; label: string; description: string }[
     },
   ];
 
+/**
+ * 카테고리별 기본 변환 단위 (from: SI 기준 단위 ID, to: 출력 단위 ID).
+ * getDefaultUnits 등 UI에서 사용. 단일 소스로 ID 오타/불일치 방지.
+ */
+export const DEFAULT_UNITS: Record<
+  CategoryId,
+  { from: UnitId; to: UnitId }
+> = {
+  pressure: { from: "Pa", to: "bar" },
+  viscosity: { from: "Pa_s", to: "cP" },
+  kinematicViscosity: { from: "m2_per_s", to: "cSt" },
+  energy: { from: "J", to: "kJ" },
+  length: { from: "m", to: "km" },
+  mass: { from: "kg", to: "lb" },
+  volume: { from: "m3", to: "L" },
+  temperature: { from: "C", to: "K" },
+  area: { from: "m2", to: "pyeong" },
+  power: { from: "W", to: "kW" },
+  force: { from: "N", to: "kN" },
+  speed: { from: "m_per_s", to: "km_per_h" },
+  flowRate: { from: "m3_per_s", to: "CFM" },
+};
+
 export function getUnitsByCategory(category: CategoryId): UnitDefinition[] {
   return units.filter((u) => u.category === category);
 }
