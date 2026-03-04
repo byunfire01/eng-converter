@@ -79,6 +79,8 @@ export type UnitId =
   | "MW"
   | "hp"
   | "PS"
+  | "kcal_per_h"
+  | "RT"
   // force
   | "N"
   | "kN"
@@ -94,9 +96,14 @@ export type UnitId =
   // kinematic viscosity
   | "m2_per_s"
   | "St"
-  | "cSt";
-
-// 유량 (Flow rate) 단위는 아래에서 추가 정의된다.
+  | "cSt"
+  // flow rate
+  | "m3_per_s"
+  | "m3_per_h"
+  | "m3_per_min"
+  | "L_per_min"
+  | "CFM"
+  | "GPM";
 
 export interface UnitDefinition {
   id: UnitId;
