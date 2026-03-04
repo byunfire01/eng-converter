@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
-import { ArrowRightLeft, Copy, Check } from "lucide-react";
+import { useMemo, useState, useCallback, useEffect } from "react";
+import { ArrowRightLeft, Copy, Check, Sun, Moon } from "lucide-react";
 import Decimal from "decimal.js";
 import {
   categories, convertUnit, DEFAULT_UNITS,
@@ -16,6 +16,19 @@ export default function Home() {
   const [toUnit, setToUnit] = useState<UnitId>("psi");
   const [precision, setPrecision] = useState(10);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("eng-converter-theme");
+    if (saved === "light" || saved === "dark") setTheme(saved);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("eng-converter-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(t => (t === "dark" ? "light" : "dark"));
 
   const availableUnits = useMemo(() => getUnitsByCategory(category), [category]);
   const parsed = useMemo(() => parseToDecimal(inputValue), [inputValue]);
@@ -48,14 +61,12 @@ export default function Home() {
 
   const handleSwap = () => {
     const f = fromUnit, t = toUnit;
-    setFromUnit(t);
-    setToUnit(f);
+    setFromUnit(t); setToUnit(f);
   };
 
   const handleQuickConversion = (q: typeof QUICK_CONVERSIONS[number]) => {
     setCategory(q.category);
-    setFromUnit(q.fromId);
-    setToUnit(q.toId);
+    setFromUnit(q.fromId); setToUnit(q.toId);
   };
 
   const copyValue = (text: string, id: string) => {
@@ -69,16 +80,27 @@ export default function Home() {
   const refs = QUICK_REFERENCE[category] || [];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors">
       <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-6">
 
         {/* Header */}
-        <header className="mb-5">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Engineering Unit Converter</h1>
-            <span className="text-[11px] text-slate-700">v2.0</span>
+        <header className="mb-5 flex items-start justify-between">
+          <div>
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Engineering Unit Converter</h1>
+              <span className="text-[11px] text-[var(--text-faint)]">v2.0</span>
+            </div>
+            <p className="text-[13px] text-[var(--text-sub)] mt-0.5">고정밀 SI 기반 공학용 단위 변환기</p>
           </div>
-          <p className="text-[13px] text-slate-500 mt-0.5">고정밀 SI 기반 공학용 단위 변환기</p>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg border border-[var(--border)] hover:border-[var(--accent-border)] transition"
+            title="테마 전환"
+          >
+            {theme === "dark"
+              ? <Sun size={18} className="text-[var(--text-sub)]" />
+              : <Moon size={18} className="text-[var(--text-sub)]" />}
+          </button>
         </header>
 
         {/* Category Tabs */}
@@ -90,8 +112,8 @@ export default function Home() {
                 onClick={() => handleCategoryChange(cat.id as CategoryId)}
                 className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition whitespace-nowrap border ${
                   category === cat.id
-                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900 border-transparent"
+                    ? "bg-[var(--accent-bg)] text-[var(--accent)] border-[var(--accent-border)]"
+                    : "text-[var(--text-sub)] hover:text-[var(--text)] hover:bg-[var(--hover-bg)] border-transparent"
                 }`}
               >
                 {cat.label}
@@ -102,12 +124,12 @@ export default function Home() {
 
         {/* Quick Conversions */}
         <div className="mb-4 flex items-center gap-2 overflow-x-auto text-xs pb-1">
-          <span className="text-slate-600 shrink-0">Quick</span>
+          <span className="text-[var(--text-dim)] shrink-0">Quick</span>
           {QUICK_CONVERSIONS.map((q, i) => (
             <button
               key={i}
               onClick={() => handleQuickConversion(q)}
-              className="px-2 py-1 rounded bg-slate-900 border border-slate-800 text-slate-500 hover:text-emerald-400 hover:border-emerald-500/30 transition whitespace-nowrap shrink-0"
+              className="px-2 py-1 rounded bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-sub)] hover:text-[var(--accent)] hover:border-[var(--accent-border)] transition whitespace-nowrap shrink-0"
             >
               {q.label}
             </button>
@@ -115,93 +137,93 @@ export default function Home() {
         </div>
 
         {/* ── Main Converter ── */}
-        <section className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 lg:p-6 mb-3">
+        <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 lg:p-6 mb-3 transition-colors">
           <div className="grid md:grid-cols-[1fr_auto_1fr] gap-4 lg:gap-6 items-start">
 
             {/* Input */}
             <div>
-              <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Input</label>
+              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1.5">Input</label>
               <input
                 type="text"
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 px-4 py-3 rounded-lg text-xl font-mono outline-none focus:border-emerald-500 transition"
+                className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-3 rounded-lg text-xl font-mono outline-none focus:border-[var(--accent)] transition"
                 placeholder="값 입력"
                 autoFocus
               />
               <select
                 value={fromUnit}
                 onChange={e => setFromUnit(e.target.value as UnitId)}
-                className="w-full mt-2 bg-slate-800 border border-slate-700 px-3 py-2 rounded-lg text-sm"
+                className="w-full mt-2 bg-[var(--bg-elevated)] border border-[var(--border-input)] px-3 py-2 rounded-lg text-sm"
               >
                 {availableUnits.map(u => (
                   <option key={u.id} value={u.id}>{u.symbol} — {u.name}</option>
                 ))}
               </select>
               {UNIT_DESCRIPTIONS[fromUnit] && (
-                <p className="mt-1 text-[11px] text-slate-600">{UNIT_DESCRIPTIONS[fromUnit]}</p>
+                <p className="mt-1 text-[11px] text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[fromUnit]}</p>
               )}
             </div>
 
             {/* Swap */}
             <button
               onClick={handleSwap}
-              className="self-center mt-7 p-2 rounded-full border border-slate-700 hover:border-emerald-500 hover:bg-emerald-500/10 transition group"
+              className="self-center mt-7 p-2 rounded-full border border-[var(--border-input)] hover:border-[var(--accent)] hover:bg-[var(--accent-bg)] transition group"
               title="단위 교환"
             >
-              <ArrowRightLeft size={18} className="text-slate-500 group-hover:text-emerald-400 transition" />
+              <ArrowRightLeft size={18} className="text-[var(--text-sub)] group-hover:text-[var(--accent)] transition" />
             </button>
 
             {/* Output */}
             <div>
-              <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Output</label>
-              <div className="w-full bg-slate-950 border border-slate-700 px-4 py-3 rounded-lg min-h-[3.25rem] flex items-center justify-between gap-2">
-                <span className="text-xl font-mono font-bold text-emerald-400 truncate">
+              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1.5">Output</label>
+              <div className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-3 rounded-lg min-h-[3.25rem] flex items-center justify-between gap-2">
+                <span className="text-xl font-mono font-bold text-[var(--accent)] truncate">
                   {result ? fmt(result) : "\u2014"}
                 </span>
                 {result && (
                   <button
                     onClick={() => copyValue(fmt(result!), "main")}
-                    className="shrink-0 p-1 rounded hover:bg-slate-800 transition"
+                    className="shrink-0 p-1 rounded hover:bg-[var(--bg-elevated)] transition"
                     title="결과 복사"
                   >
                     {copiedId === "main"
-                      ? <Check size={16} className="text-emerald-400" />
-                      : <Copy size={16} className="text-slate-600" />}
+                      ? <Check size={16} className="text-[var(--accent)]" />
+                      : <Copy size={16} className="text-[var(--text-dim)]" />}
                   </button>
                 )}
               </div>
               <select
                 value={toUnit}
                 onChange={e => setToUnit(e.target.value as UnitId)}
-                className="w-full mt-2 bg-slate-800 border border-slate-700 px-3 py-2 rounded-lg text-sm"
+                className="w-full mt-2 bg-[var(--bg-elevated)] border border-[var(--border-input)] px-3 py-2 rounded-lg text-sm"
               >
                 {availableUnits.map(u => (
                   <option key={u.id} value={u.id}>{u.symbol} — {u.name}</option>
                 ))}
               </select>
               {UNIT_DESCRIPTIONS[toUnit] && (
-                <p className="mt-1 text-[11px] text-slate-600">{UNIT_DESCRIPTIONS[toUnit]}</p>
+                <p className="mt-1 text-[11px] text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[toUnit]}</p>
               )}
             </div>
           </div>
 
           {/* Formula + Precision */}
-          <div className="mt-4 pt-3 border-t border-slate-800/50 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-4 pt-3 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
             {conversionFactor && fromDef && toDef && (
-              <p className="text-sm font-mono text-slate-400">
+              <p className="text-sm font-mono text-[var(--text-sub)]">
                 1 {fromDef.symbol} ={" "}
-                <span className="text-emerald-400">{fmt(conversionFactor)}</span>{" "}
+                <span className="text-[var(--accent)]">{fmt(conversionFactor)}</span>{" "}
                 {toDef.symbol}
               </p>
             )}
-            <div className="flex items-center gap-2 text-xs text-slate-600">
+            <div className="flex items-center gap-2 text-xs text-[var(--text-dim)]">
               <label htmlFor="precision-select">유효숫자</label>
               <select
                 id="precision-select"
                 value={precision}
                 onChange={e => setPrecision(Number(e.target.value))}
-                className="bg-slate-800 border border-slate-700 px-2 py-1 rounded text-xs"
+                className="bg-[var(--bg-elevated)] border border-[var(--border-input)] px-2 py-1 rounded text-xs"
               >
                 {[6, 8, 10, 12, 15].map(n => (
                   <option key={n} value={n}>{n}</option>
@@ -213,11 +235,11 @@ export default function Home() {
 
         {/* ── All Conversions ── */}
         {allConversions.length > 0 && (
-          <section className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 lg:p-6 mb-3">
-            <h2 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 lg:p-6 mb-3 transition-colors">
+            <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-3">
               All Conversions
               {fromDef && (
-                <span className="normal-case tracking-normal text-slate-600 ml-2">
+                <span className="normal-case tracking-normal text-[var(--text-dim)] ml-2">
                   — {inputValue} {fromDef.symbol}
                 </span>
               )}
@@ -232,19 +254,17 @@ export default function Home() {
                   onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setToUnit(unit.id); }}
                   className={`group cursor-pointer text-left px-3 py-2.5 rounded-lg border transition ${
                     unit.id === toUnit
-                      ? "border-emerald-500/40 bg-emerald-500/10"
+                      ? "border-[var(--accent-border)] bg-[var(--accent-bg)]"
                       : unit.id === fromUnit
-                        ? "border-slate-700/50 bg-slate-800/20 opacity-50"
-                        : "border-slate-800 hover:border-slate-700 bg-slate-950/30"
+                        ? "border-[var(--border)] bg-[var(--bg-subtle)] opacity-50"
+                        : "border-[var(--border)] hover:border-[var(--border-input)] bg-[var(--bg-subtle)]"
                   }`}
                   title={UNIT_DESCRIPTIONS[unit.id] || unit.name}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <span
-                      className={`font-mono text-sm truncate ${
-                        unit.id === toUnit ? "text-emerald-400 font-semibold" : "text-slate-200"
-                      }`}
-                    >
+                    <span className={`font-mono text-sm truncate ${
+                      unit.id === toUnit ? "text-[var(--accent)] font-semibold" : ""
+                    }`}>
                       {fmt(value)}
                     </span>
                     <button
@@ -252,15 +272,15 @@ export default function Home() {
                         e.stopPropagation();
                         copyValue(`${fmt(value)} ${unit.symbol}`, unit.id);
                       }}
-                      className="shrink-0 opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-slate-700 transition"
+                      className="shrink-0 opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-[var(--bg-elevated)] transition"
                       title={`${fmt(value)} ${unit.symbol} 복사`}
                     >
                       {copiedId === unit.id
-                        ? <Check size={12} className="text-emerald-400" />
-                        : <Copy size={12} className="text-slate-600" />}
+                        ? <Check size={12} className="text-[var(--accent)]" />
+                        : <Copy size={12} className="text-[var(--text-dim)]" />}
                     </button>
                   </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">{unit.symbol}</div>
+                  <div className="text-[11px] text-[var(--text-sub)] mt-0.5">{unit.symbol}</div>
                 </div>
               ))}
             </div>
@@ -269,10 +289,10 @@ export default function Home() {
 
         {/* ── Quick Reference ── */}
         {refs.length > 0 && (
-          <section className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 lg:p-6 mb-3">
-            <h2 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 lg:p-6 mb-3 transition-colors">
+            <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-3">
               Quick Reference
-              <span className="normal-case tracking-normal text-slate-600 ml-2">
+              <span className="normal-case tracking-normal text-[var(--text-dim)] ml-2">
                 — {categories.find(c => c.id === category)?.label}
               </span>
             </h2>
@@ -280,7 +300,7 @@ export default function Home() {
               {refs.map((item, i) => (
                 <div
                   key={i}
-                  className="px-3 py-2 rounded-lg bg-slate-950/50 border border-slate-800/50 text-[13px] text-slate-400"
+                  className="px-3 py-2 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border)] text-[13px] text-[var(--text-sub)]"
                 >
                   {item}
                 </div>
@@ -290,7 +310,7 @@ export default function Home() {
         )}
 
         {/* Footer */}
-        <footer className="pt-2 pb-4 text-center text-[11px] text-slate-700">
+        <footer className="pt-2 pb-4 text-center text-[11px] text-[var(--text-faint)]">
           Decimal.js 고정밀 연산 · SI 단위계 준거
         </footer>
       </div>
