@@ -84,7 +84,7 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-3">
 
         {/* Header */}
-        <header className="mb-3 lg:mb-2 flex items-start justify-between">
+        <header className="mb-3 lg:mb-3 flex items-start justify-between">
           <div>
             <div className="flex items-baseline gap-3">
               <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Engineering Unit Converter</h1>
@@ -104,7 +104,7 @@ export default function Home() {
         </header>
 
         {/* Category Tabs */}
-        <nav className="mb-2 lg:mb-1.5 -mx-4 px-4 overflow-x-auto">
+        <nav className="mb-3 lg:mb-3 -mx-4 px-4 overflow-x-auto pt-1">
           <div className="flex gap-1 min-w-max pb-1">
             {categories.map(cat => (
               <button
@@ -123,7 +123,7 @@ export default function Home() {
         </nav>
 
         {/* Quick Conversions */}
-        <div className="mb-2 lg:mb-1.5 flex items-center gap-2 overflow-x-auto text-sm pb-1">
+        <div className="mb-3 lg:mb-3 flex items-center gap-2 overflow-x-auto text-sm pb-1">
           <span className="text-[var(--text-dim)] shrink-0">Quick</span>
           {QUICK_CONVERSIONS.map((q, i) => (
             <button
