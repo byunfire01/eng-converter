@@ -81,10 +81,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors">
-      <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-3">
+      <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-5">
 
         {/* Header */}
-        <header className="mb-3 lg:mb-3 flex items-start justify-between">
+        <header className="mb-4 flex items-start justify-between">
           <div>
             <div className="flex items-baseline gap-3">
               <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Engineering Unit Converter</h1>
@@ -104,7 +104,7 @@ export default function Home() {
         </header>
 
         {/* Category Tabs */}
-        <nav className="mb-3 lg:mb-3 -mx-4 px-4 overflow-x-auto pt-1">
+        <nav className="mb-4 -mx-4 px-4 overflow-x-auto pt-1">
           <div className="flex gap-1 min-w-max pb-1">
             {categories.map(cat => (
               <button
@@ -123,7 +123,7 @@ export default function Home() {
         </nav>
 
         {/* Quick Conversions */}
-        <div className="mb-3 lg:mb-3 flex items-center gap-2 overflow-x-auto text-sm pb-1">
+        <div className="mb-4 flex items-center gap-2 overflow-x-auto text-sm pb-1">
           <span className="text-[var(--text-dim)] shrink-0">Quick</span>
           {QUICK_CONVERSIONS.map((q, i) => (
             <button
@@ -137,7 +137,7 @@ export default function Home() {
         </div>
 
         {/* ── Main Converter ── */}
-        <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-4 mb-2 transition-colors">
+        <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-5 mb-3 transition-colors">
           <div className="grid md:grid-cols-[1fr_auto_1fr] gap-4 lg:gap-6 items-start">
 
             {/* Input */}
@@ -235,7 +235,7 @@ export default function Home() {
 
         {/* ── All Conversions ── */}
         {allConversions.length > 0 && (
-          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-4 mb-2 transition-colors">
+          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-5 mb-3 transition-colors">
             <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-2">
               All Conversions
               {fromDef && (
@@ -289,7 +289,7 @@ export default function Home() {
 
         {/* ── Quick Reference ── */}
         {refs.length > 0 && (
-          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-4 mb-2 transition-colors">
+          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-5 mb-3 transition-colors">
             <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-2">
               Quick Reference
               <span className="normal-case tracking-normal text-[var(--text-dim)] ml-2">
@@ -310,7 +310,7 @@ export default function Home() {
         )}
 
         {/* Footer */}
-        <footer className="pt-1 pb-2 text-center text-[11px] text-[var(--text-faint)]">
+        <footer className="pt-2 pb-3 text-center text-[11px] text-[var(--text-faint)]">
           Decimal.js 고정밀 연산 · SI 단위계 준거
         </footer>
       </div>
