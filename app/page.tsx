@@ -81,10 +81,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors">
-      <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-6">
+      <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-3">
 
         {/* Header */}
-        <header className="mb-5 flex items-start justify-between">
+        <header className="mb-3 lg:mb-2 flex items-start justify-between">
           <div>
             <div className="flex items-baseline gap-3">
               <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Engineering Unit Converter</h1>
@@ -104,7 +104,7 @@ export default function Home() {
         </header>
 
         {/* Category Tabs */}
-        <nav className="mb-4 -mx-4 px-4 overflow-x-auto">
+        <nav className="mb-2 lg:mb-1.5 -mx-4 px-4 overflow-x-auto">
           <div className="flex gap-1 min-w-max pb-1">
             {categories.map(cat => (
               <button
@@ -123,7 +123,7 @@ export default function Home() {
         </nav>
 
         {/* Quick Conversions */}
-        <div className="mb-4 flex items-center gap-2 overflow-x-auto text-sm pb-1">
+        <div className="mb-2 lg:mb-1.5 flex items-center gap-2 overflow-x-auto text-sm pb-1">
           <span className="text-[var(--text-dim)] shrink-0">Quick</span>
           {QUICK_CONVERSIONS.map((q, i) => (
             <button
@@ -137,17 +137,17 @@ export default function Home() {
         </div>
 
         {/* ── Main Converter ── */}
-        <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 lg:p-6 mb-3 transition-colors">
+        <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-4 mb-2 transition-colors">
           <div className="grid md:grid-cols-[1fr_auto_1fr] gap-4 lg:gap-6 items-start">
 
             {/* Input */}
             <div>
-              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1.5">Input</label>
+              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1">Input</label>
               <input
                 type="text"
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
-                className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-3 rounded-lg text-xl font-mono outline-none focus:border-[var(--accent)] transition"
+                className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-2.5 rounded-lg text-xl font-mono outline-none focus:border-[var(--accent)] transition"
                 placeholder="값 입력"
                 autoFocus
               />
@@ -176,8 +176,8 @@ export default function Home() {
 
             {/* Output */}
             <div>
-              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1.5">Output</label>
-              <div className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-3 rounded-lg min-h-[3.25rem] flex items-center justify-between gap-2">
+              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1">Output</label>
+              <div className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-2.5 rounded-lg min-h-[2.75rem] flex items-center justify-between gap-2">
                 <span className="text-xl font-mono font-bold text-[var(--accent)] truncate">
                   {result ? fmt(result) : "\u2014"}
                 </span>
@@ -209,7 +209,7 @@ export default function Home() {
           </div>
 
           {/* Formula + Precision */}
-          <div className="mt-4 pt-3 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-3 pt-2 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
             {conversionFactor && fromDef && toDef && (
               <p className="text-sm font-mono text-[var(--text-sub)]">
                 1 {fromDef.symbol} ={" "}
@@ -235,8 +235,8 @@ export default function Home() {
 
         {/* ── All Conversions ── */}
         {allConversions.length > 0 && (
-          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 lg:p-6 mb-3 transition-colors">
-            <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-3">
+          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-4 mb-2 transition-colors">
+            <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-2">
               All Conversions
               {fromDef && (
                 <span className="normal-case tracking-normal text-[var(--text-dim)] ml-2">
@@ -252,7 +252,7 @@ export default function Home() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setToUnit(unit.id); }}
-                  className={`group cursor-pointer text-left px-4 py-3.5 rounded-lg border transition ${
+                  className={`group cursor-pointer text-left px-3 py-2 rounded-lg border transition ${
                     unit.id === toUnit
                       ? "border-[var(--accent-border)] bg-[var(--accent-bg)]"
                       : unit.id === fromUnit
@@ -280,7 +280,7 @@ export default function Home() {
                         : <Copy size={12} className="text-[var(--text-dim)]" />}
                     </button>
                   </div>
-                  <div className="text-sm text-[var(--text-sub)] mt-2">{unit.symbol}</div>
+                  <div className="text-sm text-[var(--text-sub)] mt-1">{unit.symbol}</div>
                 </div>
               ))}
             </div>
@@ -289,8 +289,8 @@ export default function Home() {
 
         {/* ── Quick Reference ── */}
         {refs.length > 0 && (
-          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 lg:p-6 mb-3 transition-colors">
-            <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-3">
+          <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-4 mb-2 transition-colors">
+            <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-2">
               Quick Reference
               <span className="normal-case tracking-normal text-[var(--text-dim)] ml-2">
                 — {categories.find(c => c.id === category)?.label}
@@ -310,7 +310,7 @@ export default function Home() {
         )}
 
         {/* Footer */}
-        <footer className="pt-2 pb-4 text-center text-[11px] text-[var(--text-faint)]">
+        <footer className="pt-1 pb-2 text-center text-[11px] text-[var(--text-faint)]">
           Decimal.js 고정밀 연산 · SI 단위계 준거
         </footer>
       </div>
