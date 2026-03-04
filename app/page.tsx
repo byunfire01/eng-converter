@@ -252,7 +252,7 @@ export default function Home() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setToUnit(unit.id); }}
-                  className={`group cursor-pointer text-left px-3 py-2.5 rounded-lg border transition ${
+                  className={`group cursor-pointer text-left px-4 py-3.5 rounded-lg border transition ${
                     unit.id === toUnit
                       ? "border-[var(--accent-border)] bg-[var(--accent-bg)]"
                       : unit.id === fromUnit
@@ -262,7 +262,7 @@ export default function Home() {
                   title={UNIT_DESCRIPTIONS[unit.id] || unit.name}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <span className={`font-mono text-sm truncate ${
+                    <span className={`font-mono text-base truncate ${
                       unit.id === toUnit ? "text-[var(--accent)] font-semibold" : ""
                     }`}>
                       {fmt(value)}
@@ -280,7 +280,7 @@ export default function Home() {
                         : <Copy size={12} className="text-[var(--text-dim)]" />}
                     </button>
                   </div>
-                  <div className="text-[11px] text-[var(--text-sub)] mt-0.5">{unit.symbol}</div>
+                  <div className="text-sm text-[var(--text-sub)] mt-2">{unit.symbol}</div>
                 </div>
               ))}
             </div>
