@@ -80,7 +80,7 @@ export default function Home() {
   const refs = QUICK_REFERENCE[category] || [];
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors">
+    <div className="bg-[var(--bg)] text-[var(--text)] transition-colors">
       <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-3">
 
         {/* Header */}
