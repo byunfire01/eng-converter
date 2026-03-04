@@ -104,13 +104,13 @@ export default function Home() {
         </header>
 
         {/* Category Tabs */}
-        <nav className="mb-3 -mx-4 px-4 overflow-x-auto">
+        <nav className="mb-4 -mx-4 px-4 overflow-x-auto">
           <div className="flex gap-1 min-w-max pb-1">
             {categories.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => handleCategoryChange(cat.id as CategoryId)}
-                className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition whitespace-nowrap border ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap border ${
                   category === cat.id
                     ? "bg-[var(--accent-bg)] text-[var(--accent)] border-[var(--accent-border)]"
                     : "text-[var(--text-sub)] hover:text-[var(--text)] hover:bg-[var(--hover-bg)] border-transparent"
@@ -123,13 +123,13 @@ export default function Home() {
         </nav>
 
         {/* Quick Conversions */}
-        <div className="mb-4 flex items-center gap-2 overflow-x-auto text-xs pb-1">
+        <div className="mb-4 flex items-center gap-2 overflow-x-auto text-sm pb-1">
           <span className="text-[var(--text-dim)] shrink-0">Quick</span>
           {QUICK_CONVERSIONS.map((q, i) => (
             <button
               key={i}
               onClick={() => handleQuickConversion(q)}
-              className="px-2 py-1 rounded bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-sub)] hover:text-[var(--accent)] hover:border-[var(--accent-border)] transition whitespace-nowrap shrink-0"
+              className="px-2.5 py-1 rounded bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-sub)] hover:text-[var(--accent)] hover:border-[var(--accent-border)] transition whitespace-nowrap shrink-0"
             >
               {q.label}
             </button>
