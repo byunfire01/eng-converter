@@ -154,14 +154,14 @@ export default function Home() {
               <select
                 value={fromUnit}
                 onChange={e => setFromUnit(e.target.value as UnitId)}
-                className="w-full mt-2 bg-[var(--bg-elevated)] border border-[var(--border-input)] px-3 py-2 rounded-lg text-sm"
+                className="w-full mt-2 bg-[var(--bg-elevated)] border border-[var(--border-input)] px-3 py-2.5 rounded-lg text-base"
               >
                 {availableUnits.map(u => (
                   <option key={u.id} value={u.id}>{u.symbol} — {u.name}</option>
                 ))}
               </select>
               {UNIT_DESCRIPTIONS[fromUnit] && (
-                <p className="mt-1 text-[11px] text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[fromUnit]}</p>
+                <p className="mt-2 text-sm text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[fromUnit]}</p>
               )}
             </div>
 
@@ -196,14 +196,14 @@ export default function Home() {
               <select
                 value={toUnit}
                 onChange={e => setToUnit(e.target.value as UnitId)}
-                className="w-full mt-2 bg-[var(--bg-elevated)] border border-[var(--border-input)] px-3 py-2 rounded-lg text-sm"
+                className="w-full mt-2 bg-[var(--bg-elevated)] border border-[var(--border-input)] px-3 py-2.5 rounded-lg text-base"
               >
                 {availableUnits.map(u => (
                   <option key={u.id} value={u.id}>{u.symbol} — {u.name}</option>
                 ))}
               </select>
               {UNIT_DESCRIPTIONS[toUnit] && (
-                <p className="mt-1 text-[11px] text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[toUnit]}</p>
+                <p className="mt-2 text-sm text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[toUnit]}</p>
               )}
             </div>
           </div>
