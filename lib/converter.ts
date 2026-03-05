@@ -155,19 +155,19 @@ const units: UnitDefinition[] = [
 
 const unitMap: Record<string, UnitDefinition> = units.reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as any);
 export const categories = [
-  { id: "pressure", label: "압력", description: "Pa, bar, psi, atm 등" },
-  { id: "viscosity", label: "점도", description: "Pa·s, cP 등" },
-  { id: "kinematicViscosity", label: "동점도", description: "m²/s, St, cSt" },
-  { id: "energy", label: "에너지", description: "J, kcal, BTU, kWh 등" },
+  { id: "area", label: "면적", description: "m², 평, ha, ft² 등" },
   { id: "length", label: "길이", description: "m, mm, inch, ft 등" },
   { id: "mass", label: "질량", description: "kg, g, lb, oz 등" },
   { id: "volume", label: "부피", description: "m³, L, mL, gal 등" },
-  { id: "temperature", label: "온도", description: "°C, °F, K" },
-  { id: "area", label: "면적", description: "m², 평, ha, ft² 등" },
   { id: "power", label: "동력", description: "W, kW, hp, RT 등" },
+  { id: "pressure", label: "압력", description: "Pa, bar, psi, atm 등" },
+  { id: "energy", label: "에너지", description: "J, kcal, BTU, kWh 등" },
   { id: "force", label: "힘", description: "N, kgf, lbf 등" },
   { id: "speed", label: "속도", description: "m/s, km/h, mph 등" },
   { id: "flowRate", label: "유량", description: "CMH, CFM, GPM 등" },
+  { id: "viscosity", label: "점도", description: "Pa·s, cP 등" },
+  { id: "kinematicViscosity", label: "동점도", description: "m²/s, St, cSt" },
+  { id: "temperature", label: "온도", description: "°C, °F, K" },
 ];
 
 export const DEFAULT_UNITS: Record<CategoryId, { from: UnitId; to: UnitId }> = {
@@ -320,14 +320,18 @@ export const QUICK_REFERENCE: Record<CategoryId, string[]> = {
 };
 
 export const QUICK_CONVERSIONS: { label: string; category: CategoryId; fromId: UnitId; toId: UnitId }[] = [
-  { label: "psi → bar", category: "pressure", fromId: "psi", toId: "bar" },
-  { label: "°C → °F", category: "temperature", fromId: "C", toId: "F" },
-  { label: "kW → hp", category: "power", fromId: "kW", toId: "hp" },
+  { label: "m² → 평", category: "area", fromId: "m2", toId: "pyeong" },
   { label: "mm → inch", category: "length", fromId: "mm", toId: "inch" },
   { label: "kg → lb", category: "mass", fromId: "kg", toId: "lb" },
+  { label: "L → gal", category: "volume", fromId: "L", toId: "galUS" },
+  { label: "kW → hp", category: "power", fromId: "kW", toId: "hp" },
+  { label: "psi → bar", category: "pressure", fromId: "psi", toId: "bar" },
+  { label: "kcal → kJ", category: "energy", fromId: "kcal", toId: "kJ" },
+  { label: "kgf → N", category: "force", fromId: "kgf", toId: "N" },
+  { label: "km/h → mph", category: "speed", fromId: "km_per_h", toId: "mph" },
   { label: "CMH → CFM", category: "flowRate", fromId: "m3_per_h", toId: "CFM" },
-  { label: "kgf/cm² → psi", category: "pressure", fromId: "kgf_per_cm2", toId: "psi" },
-  { label: "RT → kW", category: "power", fromId: "RT", toId: "kW" },
+  { label: "cP → Pa·s", category: "viscosity", fromId: "cP", toId: "Pa_s" },
+  { label: "cSt → St", category: "kinematicViscosity", fromId: "cSt", toId: "St" },
 ];
 
 export function getUnitsByCategory(category: CategoryId) { return units.filter((u) => u.category === category); }
