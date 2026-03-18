@@ -121,11 +121,11 @@ export default function Home() {
           <div className="flex items-center gap-1.5">
             <button
               onClick={toggleLocale}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--border)] hover:border-[var(--accent-border)] transition text-sm"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-bg)] hover:bg-[var(--accent)] hover:text-white transition text-sm"
               title={t("langToggle")}
             >
-              <Globe size={15} className="text-[var(--text-sub)]" />
-              <span className="text-[var(--text-sub)] text-xs font-medium">{t("langToggle")}</span>
+              <Globe size={15} className="text-[var(--accent)]" />
+              <span className="text-[var(--accent)] text-xs font-semibold">{t("langToggle")}</span>
             </button>
             <button
               onClick={toggleTheme}
@@ -347,7 +347,8 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="pt-2 pb-3 text-center text-[11px] text-[var(--text-faint)]">
-          {t("footer")}
+          <p>{t("footer")}</p>
+          <p className="mt-1">{locale === "ko" ? "Designed by 변영덕" : "Designed by DANIEL BYUN"}</p>
         </footer>
       </div>
     </div>
