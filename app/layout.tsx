@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Engineering Unit Converter",
   description:
-    "고정밀 SI 기반 공학용 단위 변환기. 압력, 점도, 에너지, 길이, 질량, 온도 등 13개 카테고리 90+ 단위 지원.",
+    "High-precision SI-based engineering unit converter. 16 categories, 110+ units: pressure, torque, density, energy, length, mass, temperature and more. | 고정밀 SI 기반 공학용 단위 변환기. 16개 카테고리 110+ 단위 지원.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <head>
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>

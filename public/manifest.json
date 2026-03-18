@@ -1,7 +1,7 @@
 {
-  "name": "Eng Converter",
-  "short_name": "Converter",
-  "description": "고정밀 SI 기반 공학용 단위 변환기",
+  "name": "Engineering Unit Converter",
+  "short_name": "Eng Converter",
+  "description": "High-precision SI-based engineering unit converter | 고정밀 SI 기반 공학용 단위 변환기",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",

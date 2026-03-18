@@ -1,13 +1,17 @@
 "use client";
 
 import { useMemo, useState, useCallback, useEffect } from "react";
-import { ArrowRightLeft, Copy, Check, Sun, Moon } from "lucide-react";
+import { ArrowRightLeft, Copy, Check, Sun, Moon, Globe } from "lucide-react";
 import Decimal from "decimal.js";
 import {
   categories, convertUnit, DEFAULT_UNITS,
-  getUnitsByCategory, parseToDecimal, UNIT_DESCRIPTIONS, QUICK_REFERENCE, QUICK_CONVERSIONS,
+  getUnitsByCategory, parseToDecimal, QUICK_CONVERSIONS,
   type CategoryId, type UnitId, type UnitDefinition,
 } from "@/lib/converter";
+import {
+  type Locale, UI, CATEGORY_LABELS, CATEGORY_DESCRIPTIONS,
+  UNIT_DESCRIPTIONS_I18N, QUICK_REFERENCE_I18N,
+} from "@/lib/i18n";
 
 export default function Home() {
   const [category, setCategory] = useState<CategoryId>("pressure");
@@ -17,7 +21,9 @@ export default function Home() {
   const [precision, setPrecision] = useState(10);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [locale, setLocale] = useState<Locale>("en");
 
+  /* ─── Persistence: theme ─── */
   useEffect(() => {
     const saved = localStorage.getItem("eng-converter-theme");
     if (saved === "light" || saved === "dark") setTheme(saved);
@@ -28,7 +34,26 @@ export default function Home() {
     localStorage.setItem("eng-converter-theme", theme);
   }, [theme]);
 
+  /* ─── Persistence: locale ─── */
+  useEffect(() => {
+    const saved = localStorage.getItem("eng-converter-lang");
+    if (saved === "ko" || saved === "en") {
+      setLocale(saved);
+    } else {
+      const browserLang = navigator.language || "";
+      setLocale(browserLang.startsWith("ko") ? "ko" : "en");
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("eng-converter-lang", locale);
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   const toggleTheme = () => setTheme(t => (t === "dark" ? "light" : "dark"));
+  const toggleLocale = () => setLocale(l => (l === "ko" ? "en" : "ko"));
+  const t = useCallback((key: string) => UI[locale]?.[key] ?? key, [locale]);
+  const desc = useCallback((unitId: string) => UNIT_DESCRIPTIONS_I18N[locale]?.[unitId] ?? "", [locale]);
 
   const availableUnits = useMemo(() => getUnitsByCategory(category), [category]);
   const parsed = useMemo(() => parseToDecimal(inputValue), [inputValue]);
@@ -60,8 +85,8 @@ export default function Home() {
   };
 
   const handleSwap = () => {
-    const f = fromUnit, t = toUnit;
-    setFromUnit(t); setToUnit(f);
+    const f = fromUnit, tt = toUnit;
+    setFromUnit(tt); setToUnit(f);
   };
 
   const handleQuickConversion = (q: typeof QUICK_CONVERSIONS[number]) => {
@@ -77,7 +102,8 @@ export default function Home() {
 
   const fromDef = availableUnits.find(u => u.id === fromUnit);
   const toDef = availableUnits.find(u => u.id === toUnit);
-  const refs = QUICK_REFERENCE[category] || [];
+  const refs = QUICK_REFERENCE_I18N[locale]?.[category] || [];
+  const catLabel = (id: string) => CATEGORY_LABELS[locale]?.[id] ?? id;
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors">
@@ -87,20 +113,30 @@ export default function Home() {
         <header className="mb-4 flex items-start justify-between">
           <div>
             <div className="flex items-baseline gap-3">
-              <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Engineering Unit Converter</h1>
-              <span className="text-[11px] text-[var(--text-faint)]">v2.0</span>
+              <h1 className="text-xl lg:text-2xl font-bold tracking-tight">{t("title")}</h1>
+              <span className="text-[11px] text-[var(--text-faint)]">v3.0</span>
             </div>
-            <p className="text-[13px] text-[var(--text-sub)] mt-0.5">고정밀 SI 기반 공학용 단위 변환기</p>
+            <p className="text-[13px] text-[var(--text-sub)] mt-0.5">{t("subtitle")}</p>
           </div>
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg border border-[var(--border)] hover:border-[var(--accent-border)] transition"
-            title="테마 전환"
-          >
-            {theme === "dark"
-              ? <Sun size={18} className="text-[var(--text-sub)]" />
-              : <Moon size={18} className="text-[var(--text-sub)]" />}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={toggleLocale}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--border)] hover:border-[var(--accent-border)] transition text-sm"
+              title={t("langToggle")}
+            >
+              <Globe size={15} className="text-[var(--text-sub)]" />
+              <span className="text-[var(--text-sub)] text-xs font-medium">{t("langToggle")}</span>
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg border border-[var(--border)] hover:border-[var(--accent-border)] transition"
+              title={t("themeToggle")}
+            >
+              {theme === "dark"
+                ? <Sun size={18} className="text-[var(--text-sub)]" />
+                : <Moon size={18} className="text-[var(--text-sub)]" />}
+            </button>
+          </div>
         </header>
 
         {/* Category Tabs */}
@@ -116,7 +152,7 @@ export default function Home() {
                     : "text-[var(--text-sub)] hover:text-[var(--text)] hover:bg-[var(--hover-bg)] border-transparent"
                 }`}
               >
-                {cat.label}
+                {catLabel(cat.id)}
               </button>
             ))}
           </div>
@@ -124,7 +160,7 @@ export default function Home() {
 
         {/* Quick Conversions */}
         <div className="mb-4 flex items-center gap-2 overflow-x-auto text-sm pb-1">
-          <span className="text-[var(--text-dim)] shrink-0">Quick</span>
+          <span className="text-[var(--text-dim)] shrink-0">{t("quick")}</span>
           {QUICK_CONVERSIONS.map((q, i) => (
             <button
               key={i}
@@ -142,13 +178,13 @@ export default function Home() {
 
             {/* Input */}
             <div>
-              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1">Input</label>
+              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1">{t("input")}</label>
               <input
                 type="text"
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
                 className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-2.5 rounded-lg text-xl font-mono outline-none focus:border-[var(--accent)] transition"
-                placeholder="값 입력"
+                placeholder={t("placeholder")}
                 autoFocus
               />
               <select
@@ -160,8 +196,8 @@ export default function Home() {
                   <option key={u.id} value={u.id}>{u.symbol} — {u.name}</option>
                 ))}
               </select>
-              {UNIT_DESCRIPTIONS[fromUnit] && (
-                <p className="mt-2 text-sm text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[fromUnit]}</p>
+              {desc(fromUnit) && (
+                <p className="mt-2 text-sm text-[var(--text-dim)]">{desc(fromUnit)}</p>
               )}
             </div>
 
@@ -169,14 +205,14 @@ export default function Home() {
             <button
               onClick={handleSwap}
               className="self-center mt-7 p-2 rounded-full border border-[var(--border-input)] hover:border-[var(--accent)] hover:bg-[var(--accent-bg)] transition group"
-              title="단위 교환"
+              title={t("swap")}
             >
               <ArrowRightLeft size={18} className="text-[var(--text-sub)] group-hover:text-[var(--accent)] transition" />
             </button>
 
             {/* Output */}
             <div>
-              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1">Output</label>
+              <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider block mb-1">{t("output")}</label>
               <div className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] px-4 py-2.5 rounded-lg min-h-[2.75rem] flex items-center justify-between gap-2">
                 <span className="text-xl font-mono font-bold text-[var(--accent)] truncate">
                   {result ? fmt(result) : "\u2014"}
@@ -185,7 +221,7 @@ export default function Home() {
                   <button
                     onClick={() => copyValue(fmt(result!), "main")}
                     className="shrink-0 p-1 rounded hover:bg-[var(--bg-elevated)] transition"
-                    title="결과 복사"
+                    title={t("copyResult")}
                   >
                     {copiedId === "main"
                       ? <Check size={16} className="text-[var(--accent)]" />
@@ -202,8 +238,8 @@ export default function Home() {
                   <option key={u.id} value={u.id}>{u.symbol} — {u.name}</option>
                 ))}
               </select>
-              {UNIT_DESCRIPTIONS[toUnit] && (
-                <p className="mt-2 text-sm text-[var(--text-dim)]">{UNIT_DESCRIPTIONS[toUnit]}</p>
+              {desc(toUnit) && (
+                <p className="mt-2 text-sm text-[var(--text-dim)]">{desc(toUnit)}</p>
               )}
             </div>
           </div>
@@ -218,7 +254,7 @@ export default function Home() {
               </p>
             )}
             <div className="flex items-center gap-2 text-xs text-[var(--text-dim)]">
-              <label htmlFor="precision-select">유효숫자</label>
+              <label htmlFor="precision-select">{t("precision")}</label>
               <select
                 id="precision-select"
                 value={precision}
@@ -237,7 +273,7 @@ export default function Home() {
         {allConversions.length > 0 && (
           <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-5 mb-3 transition-colors">
             <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-2">
-              All Conversions
+              {t("allConversions")}
               {fromDef && (
                 <span className="normal-case tracking-normal text-[var(--text-dim)] ml-2">
                   — {inputValue} {fromDef.symbol}
@@ -259,7 +295,7 @@ export default function Home() {
                         ? "border-[var(--border)] bg-[var(--bg-subtle)] opacity-50"
                         : "border-[var(--border)] hover:border-[var(--border-input)] bg-[var(--bg-subtle)]"
                   }`}
-                  title={UNIT_DESCRIPTIONS[unit.id] || unit.name}
+                  title={desc(unit.id) || unit.name}
                 >
                   <div className="flex items-center justify-between gap-1">
                     <span className={`font-mono text-base truncate ${
@@ -273,7 +309,7 @@ export default function Home() {
                         copyValue(`${fmt(value)} ${unit.symbol}`, unit.id);
                       }}
                       className="shrink-0 opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-[var(--bg-elevated)] transition"
-                      title={`${fmt(value)} ${unit.symbol} 복사`}
+                      title={`${fmt(value)} ${unit.symbol} ${t("copyUnit")}`}
                     >
                       {copiedId === unit.id
                         ? <Check size={12} className="text-[var(--accent)]" />
@@ -291,9 +327,9 @@ export default function Home() {
         {refs.length > 0 && (
           <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-5 mb-3 transition-colors">
             <h2 className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider mb-2">
-              Quick Reference
+              {t("quickReference")}
               <span className="normal-case tracking-normal text-[var(--text-dim)] ml-2">
-                — {categories.find(c => c.id === category)?.label}
+                — {catLabel(category)}
               </span>
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -311,7 +347,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="pt-2 pb-3 text-center text-[11px] text-[var(--text-faint)]">
-          Decimal.js 고정밀 연산 · SI 단위계 준거
+          {t("footer")}
         </footer>
       </div>
     </div>
