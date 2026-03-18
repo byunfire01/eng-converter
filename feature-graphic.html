@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1024px;
+    height: 500px;
+    overflow: hidden;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  .container {
+    width: 1024px;
+    height: 500px;
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 40%, #0d1117 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative grid pattern */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(52, 211, 153, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(52, 211, 153, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Glow orbs */
+  .orb1 {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+    top: -100px;
+    right: 100px;
+  }
+  .orb2 {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+    bottom: -80px;
+    left: 60px;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    padding: 0 70px;
+    width: 100%;
+  }
+
+  .left {
+    flex: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    letter-spacing: 0.5px;
+  }
+
+  .title {
+    color: #f0f6fc;
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+  }
+  .title span {
+    color: #34d399;
+  }
+
+  .subtitle {
+    color: #8b949e;
+    font-size: 17px;
+    line-height: 1.5;
+    max-width: 400px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 30px;
+    margin-top: 24px;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    color: #34d399;
+    font-size: 28px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    color: #6e7681;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* Right side: mock converter card */
+  .mock-card {
+    width: 340px;
+    flex-shrink: 0;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .mock-header {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .mock-tab {
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8b949e;
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .mock-tab.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  .mock-input-group {
+    margin-bottom: 12px;
+  }
+  .mock-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #6e7681;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .mock-input {
+    width: 100%;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #f0f6fc;
+    font-size: 20px;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+  }
+  .mock-input.result {
+    color: #34d399;
+  }
+  .mock-select {
+    width: 100%;
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #8b949e;
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  .mock-swap {
+    text-align: center;
+    margin: 8px 0;
+    color: #484f58;
+    font-size: 18px;
+  }
+
+  .mock-formula {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #30363d;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #6e7681;
+  }
+  .mock-formula span {
+    color: #34d399;
+    font-weight: 700;
+  }
+
+  .designer {
+    position: absolute;
+    bottom: 14px;
+    right: 24px;
+    color: #484f58;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="grid-bg"></div>
+  <div class="orb1"></div>
+  <div class="orb2"></div>
+
+  <div class="content">
+    <div class="left">
+      <div class="badge">HIGH-PRECISION SI ENGINE</div>
+      <div class="title">
+        Engineering<br>Unit <span>Converter</span>
+      </div>
+      <div class="subtitle">
+        Professional-grade unit conversion for engineers.
+        Decimal.js powered, zero floating-point errors.
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">16</div>
+          <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">110+</div>
+          <div class="stat-label">Units</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Languages</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-card">
+      <div class="mock-header">
+        <div class="mock-tab active">Pressure</div>
+        <div class="mock-tab">Length</div>
+        <div class="mock-tab">Mass</div>
+        <div class="mock-tab">Torque</div>
+      </div>
+
+      <div class="mock-input-group">
+        <div class="mock-label">Input</div>
+        <div class="mock-input">14.696</div>
+        <div class="mock-select">psi — Pound per Square Inch</div>
+      </div>
+
+      <div class="mock-swap">⇅</div>
+
+      <div class="mock-input-group">
+        <div class="mock-label">Output</div>
+        <div class="mock-input result">1.01325</div>
+        <div class="mock-select">bar — Bar</div>
+      </div>
+
+      <div class="mock-formula">
+        1 psi = <span>0.0689476</span> bar
+      </div>
+    </div>
+  </div>
+
+  <div class="designer">Designed by DANIEL BYUN</div>
+</div>
+</body>
+</html>
