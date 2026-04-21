@@ -25,7 +25,7 @@ export default function CalculatorPage() {
   const [copied, setCopied] = useState<"expr" | "result" | null>(null);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [locale, setLocale] = useState<Locale>("en");
-  const exprScrollRef = useRef<HTMLDivElement>(null);
+  const exprInputRef = useRef<HTMLInputElement>(null);
 
   /* ─── Persistence: theme ─── */
   useEffect(() => {
@@ -70,12 +70,21 @@ export default function CalculatorPage() {
 
   const t = useCallback((k: string) => UI[locale]?.[k] ?? k, [locale]);
 
-  /* ─── Auto-scroll display to the right as user types (mobile-friendly) ─── */
+  /* ─── Auto-scroll input to cursor (mobile-friendly) ─── */
   useEffect(() => {
-    if (exprScrollRef.current) {
-      exprScrollRef.current.scrollLeft = exprScrollRef.current.scrollWidth;
-    }
+    const el = exprInputRef.current;
+    if (el) el.scrollLeft = el.scrollWidth;
   }, [expr]);
+
+  /** Set cursor position after a state update (next frame). */
+  const setCursor = useCallback((pos: number) => {
+    requestAnimationFrame(() => {
+      const el = exprInputRef.current;
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(pos, pos);
+    });
+  }, []);
 
   /* ─── Live preview of result ─── */
   const livePreview = useMemo(() => {
@@ -88,22 +97,41 @@ export default function CalculatorPage() {
   }, [expr, angleMode]);
 
   /* ─── Button handlers ─── */
-  // After `=`, a digit/dot starts a new expression; an operator continues from the result.
+  // Insert at caret position; after `=` a digit/dot starts fresh, operators continue from result.
   const insert = useCallback((snippet: string) => {
     const startsFresh = justEvaluated && /^[0-9.]/.test(snippet);
     setJustEvaluated(false);
-    setExpr(prev => (startsFresh ? snippet : prev + snippet));
-  }, [justEvaluated]);
+    const el = exprInputRef.current;
+    const selStart = el?.selectionStart ?? expr.length;
+    const selEnd = el?.selectionEnd ?? expr.length;
+    const base = startsFresh ? "" : expr;
+    const iStart = startsFresh ? 0 : selStart;
+    const iEnd = startsFresh ? 0 : selEnd;
+    const next = base.slice(0, iStart) + snippet + base.slice(iEnd);
+    setExpr(next);
+    setCursor(iStart + snippet.length);
+  }, [expr, justEvaluated, setCursor]);
 
   const backspace = useCallback(() => {
     setJustEvaluated(false);
-    setExpr(prev => prev.slice(0, -1));
-  }, []);
+    const el = exprInputRef.current;
+    if (!el) { setExpr(prev => prev.slice(0, -1)); return; }
+    const selStart = el.selectionStart ?? expr.length;
+    const selEnd = el.selectionEnd ?? expr.length;
+    if (selStart !== selEnd) {
+      setExpr(expr.slice(0, selStart) + expr.slice(selEnd));
+      setCursor(selStart);
+    } else if (selStart > 0) {
+      setExpr(expr.slice(0, selStart - 1) + expr.slice(selStart));
+      setCursor(selStart - 1);
+    }
+  }, [expr, setCursor]);
 
   const clearAll = useCallback(() => {
     setJustEvaluated(false);
     setExpr("");
-  }, []);
+    setCursor(0);
+  }, [setCursor]);
 
   const equals = useCallback(() => {
     if (!expr.trim()) return;
@@ -114,21 +142,40 @@ export default function CalculatorPage() {
       setHistory(h => [{ expr, result: formatted }, ...h].slice(0, MAX_HISTORY));
       setExpr(formatted);
       setJustEvaluated(true);
+      setCursor(formatted.length);
     } catch {
       /* leave expr; error shown via livePreview === null */
     }
-  }, [expr, angleMode]);
+  }, [expr, angleMode, setCursor]);
 
   const insertAns = useCallback(() => {
     if (ans === null) return;
-    setJustEvaluated(false);
-    setExpr(prev => prev + formatResult(ans));
-  }, [ans]);
+    insert(formatResult(ans));
+  }, [ans, insert]);
 
   const toggleSign = useCallback(() => {
     setJustEvaluated(false);
-    setExpr(prev => toggleLastSign(prev));
+    setExpr(prev => {
+      const next = toggleLastSign(prev);
+      setCursor(next.length);
+      return next;
+    });
+  }, [setCursor]);
+
+  /** Direct typing into the input (physical keyboard, paste). Normalize ASCII to display chars. */
+  const handleExprChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    let v = e.target.value;
+    v = v.replace(/\*/g, "×").replace(/\//g, "÷");
+    setJustEvaluated(false);
+    setExpr(v);
   }, []);
+
+  const handleExprKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "=") {
+      e.preventDefault();
+      equals();
+    }
+  }, [equals]);
 
   /* ─── Memory ops ─── */
   const memClear = () => setMemory(0);
@@ -319,16 +366,26 @@ export default function CalculatorPage() {
               </button>
             </div>
           </div>
-          <div className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-3 py-3 min-h-[3.5rem] flex items-center justify-between gap-2">
-            <div
-              ref={exprScrollRef}
-              className="flex-1 min-w-0 overflow-x-auto whitespace-nowrap text-lg lg:text-xl font-mono [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
-            >
-              {expr || <span className="text-[var(--text-faint)]">{t("calcEmpty")}</span>}
-            </div>
+          <div className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] focus-within:border-[var(--accent)] rounded-lg px-3 py-2 min-h-[3.5rem] flex items-center justify-between gap-2 transition-colors">
+            <input
+              ref={exprInputRef}
+              type="text"
+              value={expr}
+              onChange={handleExprChange}
+              onKeyDown={handleExprKeyDown}
+              inputMode="none"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              placeholder={t("calcEmpty")}
+              aria-label={t("calcExpression")}
+              className="flex-1 min-w-0 bg-transparent outline-none border-0 text-lg lg:text-xl font-mono text-[var(--text)] placeholder:text-[var(--text-faint)]"
+            />
             {expr && (
               <button
                 onClick={() => copy(expr, "expr")}
+                onMouseDown={e => e.preventDefault()}
                 className="shrink-0 w-9 h-9 flex items-center justify-center rounded hover:bg-[var(--bg-elevated)] transition"
                 title={t("calcCopyExpr")}
               >
@@ -366,11 +423,11 @@ export default function CalculatorPage() {
 
         {/* Memory row */}
         <section className="grid grid-cols-5 gap-1.5 mb-3">
-          <button className={btnFn} onClick={memClear} title="Memory Clear">MC</button>
-          <button className={btnFn} onClick={memRecall} title="Memory Recall">MR</button>
-          <button className={btnFn} onClick={memAdd} title="Memory Add">M+</button>
-          <button className={btnFn} onClick={memSub} title="Memory Subtract">M−</button>
-          <button className={btnFn} onClick={insertAns} title="Last answer">Ans</button>
+          <button className={btnFn} onMouseDown={e => e.preventDefault()} onClick={memClear} title="Memory Clear">MC</button>
+          <button className={btnFn} onMouseDown={e => e.preventDefault()} onClick={memRecall} title="Memory Recall">MR</button>
+          <button className={btnFn} onMouseDown={e => e.preventDefault()} onClick={memAdd} title="Memory Add">M+</button>
+          <button className={btnFn} onMouseDown={e => e.preventDefault()} onClick={memSub} title="Memory Subtract">M−</button>
+          <button className={btnFn} onMouseDown={e => e.preventDefault()} onClick={insertAns} title="Last answer">Ans</button>
         </section>
 
         {/* Main pad: scientific + basic */}
@@ -381,6 +438,7 @@ export default function CalculatorPage() {
               {sciButtons.flat().map((b, i) => (
                 <button
                   key={i}
+                  onMouseDown={e => e.preventDefault()}
                   onClick={() => (b.onClick ? b.onClick() : b.insert && insert(b.insert))}
                   className={btnSci}
                   title={b.title ?? b.label}
@@ -407,6 +465,7 @@ export default function CalculatorPage() {
                 return (
                   <button
                     key={i}
+                    onMouseDown={e => e.preventDefault()}
                     onClick={() => (b.onClick ? b.onClick() : b.insert && insert(b.insert))}
                     className={`${cls} ${extra}`}
                   >
