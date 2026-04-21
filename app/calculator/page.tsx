@@ -298,8 +298,8 @@ export default function CalculatorPage() {
           </div>
         </header>
 
-        {/* Display */}
-        <section className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-5 mb-3 transition-colors">
+        {/* Display — sticky so it stays visible while scrolling to tap the numpad on mobile */}
+        <section className="sticky top-0 z-10 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 lg:p-5 mb-3 transition-colors shadow-lg shadow-black/10 sm:shadow-none">
           <div className="flex items-center justify-between mb-2 gap-2">
             <label className="text-[11px] font-semibold text-[var(--text-sub)] uppercase tracking-wider">
               {t("calcExpression")}
