@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState, useCallback, useEffect } from "react";
-import { ArrowRightLeft, Copy, Check, Sun, Moon, Globe } from "lucide-react";
+import Link from "next/link";
+import { ArrowRightLeft, Copy, Check, Sun, Moon, Globe, Calculator } from "lucide-react";
 import Decimal from "decimal.js";
 import {
   categories, convertUnit, DEFAULT_UNITS,
@@ -118,10 +119,25 @@ export default function Home() {
             </div>
             <p className="text-[13px] text-[var(--text-sub)] mt-0.5">{t("subtitle")}</p>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <div
+              className="flex items-center gap-1.5 px-3 min-h-10 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-bg)] text-xs font-medium whitespace-nowrap"
+              title={t("navConverter")}
+            >
+              <ArrowRightLeft size={14} className="text-[var(--accent)]" />
+              <span className="text-[var(--accent)]">{t("navConverter")}</span>
+            </div>
+            <Link
+              href="/calculator"
+              className="flex items-center gap-1.5 px-3 min-h-10 rounded-lg border border-[var(--border)] text-[var(--text-sub)] hover:text-[var(--text)] hover:border-[var(--border-input)] transition text-xs font-medium whitespace-nowrap"
+              title={t("navCalculator")}
+            >
+              <Calculator size={14} />
+              <span>{t("navCalculator")}</span>
+            </Link>
             <button
               onClick={toggleLocale}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-bg)] hover:bg-[var(--accent)] hover:text-white transition text-sm"
+              className="flex items-center gap-1.5 px-3 min-h-10 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-bg)] hover:bg-[var(--accent)] hover:text-white transition whitespace-nowrap"
               title={t("langToggle")}
             >
               <Globe size={15} className="text-[var(--accent)]" />
@@ -129,7 +145,7 @@ export default function Home() {
             </button>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg border border-[var(--border)] hover:border-[var(--accent-border)] transition"
+              className="w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] hover:border-[var(--accent-border)] transition"
               title={t("themeToggle")}
             >
               {theme === "dark"
@@ -259,7 +275,7 @@ export default function Home() {
                 id="precision-select"
                 value={precision}
                 onChange={e => setPrecision(Number(e.target.value))}
-                className="bg-[var(--bg-elevated)] border border-[var(--border-input)] px-2 py-1 rounded text-xs"
+                className="bg-[var(--bg-elevated)] border border-[var(--border-input)] px-2 min-h-8 rounded text-base sm:text-xs"
               >
                 {[6, 8, 10, 12, 15].map(n => (
                   <option key={n} value={n}>{n}</option>
