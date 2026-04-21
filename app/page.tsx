@@ -111,15 +111,15 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-5">
 
         {/* Header */}
-        <header className="mb-4 flex items-start justify-between">
-          <div>
+        <header className="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div className="min-w-0">
             <div className="flex items-baseline gap-3">
               <h1 className="text-xl lg:text-2xl font-bold tracking-tight">{t("title")}</h1>
               <span className="text-[11px] text-[var(--text-faint)]">v3.0</span>
             </div>
             <p className="text-[13px] text-[var(--text-sub)] mt-0.5">{t("subtitle")}</p>
           </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap sm:justify-end">
             <div
               className="flex items-center gap-1.5 px-3 min-h-10 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-bg)] text-xs font-medium whitespace-nowrap"
               title={t("navConverter")}
